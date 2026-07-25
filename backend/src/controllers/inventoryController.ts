@@ -1,0 +1,80 @@
+import { Request, Response } from "express";
+import {
+    getAllInventory as getAllInventoryItems,
+    getInventoryById,
+    createInventory as createInventoryItem,
+    updateInventory as updateInventoryItem,
+    deleteInventory as deleteInventoryItem,
+} from "../services/inventoryService.js";
+
+export async function getInventory(req: Request, res: Response) {
+    try {
+        const inventory = await getAllInventoryItems();
+        res.json(inventory);
+    } catch (error) {
+        res.status(500).json({
+            message: "Failed to fetch inventory",
+            error: error instanceof Error ? error.message : "Unknown error",
+        });
+    }
+}
+
+export async function createInventory(req: Request, res: Response) {
+    try {
+        const { itemName, categoryId, quantity, unit, minimumStock } = req.body;
+
+        if (!itemName || !categoryId || quantity === undefined || !unit || minimumStock === undefined) {
+            return res.status(400).json({
+                message: "Missing required fields",
+            });
+        }
+
+        const item = await createInventoryItem({
+            itemName,
+            categoryId,
+            quantity,
+            unit,
+            minimumStock,
+        });
+
+        res.status(201).json(item);
+    } catch (error) {
+        res.status(400).json({
+            message: error instanceof Error ? error.message : "Failed to create inventory item",
+        });
+    }
+}
+
+export async function updateInventory(req: Request, res: Response) {
+    try {
+        const { id } = req.params as { id: string };
+        const { itemName, quantity, unit, minimumStock } = req.body;
+
+        const item = await updateInventoryItem(parseInt(id), {
+            itemName,
+            quantity,
+            unit,
+            minimumStock,
+        });
+
+        res.json(item);
+    } catch (error) {
+        res.status(400).json({
+            message: error instanceof Error ? error.message : "Failed to update inventory item",
+        });
+    }
+}
+
+export async function deleteInventory(req: Request, res: Response) {
+    try {
+        const { id } = req.params as { id: string };
+
+        await deleteInventoryItem(parseInt(id));
+
+        res.json({ message: "Inventory item deleted successfully" });
+    } catch (error) {
+        res.status(400).json({
+            message: error instanceof Error ? error.message : "Failed to delete inventory item",
+        });
+    }
+}

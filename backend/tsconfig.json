@@ -18,8 +18,7 @@
   },
 
   "include": [
-    "src",
-    "prisma.config.ts"
+    "src/**/*",
   ],
 
   "exclude": [
