@@ -1,13 +1,135 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+enum RoleName {
+  ADMINISTRATOR
+  MANAGER
+  CHEF
+  COOK
+  CASHIER
+}
+
+enum EmploymentStatus {
+  ACTIVE
+  INACTIVE
+  TERMINATED
+}
+
+enum ShiftStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
+model Role {
+  roleId      Int       @id @default(autoincrement()) @map("role_id")
+  roleName    RoleName  @unique @map("role_name")
+  description String?
+
+  users User[]
+
+  @@map("Role")
+}
+
+model Employee {
+  employeeId       Int                @id @default(autoincrement()) @map("employee_id")
+
+  firstName        String             @map("first_name")
+  lastName         String             @map("last_name")
+
+  email            String             @unique
+  phoneNumber      String?            @map("phone_number")
+
+  hireDate         DateTime           @map("hire_date")
+
+  employmentStatus EmploymentStatus   @default(ACTIVE) @map("employment_status")
+
+  createdAt        DateTime           @default(now()) @map("created_at")
+  updatedAt        DateTime           @updatedAt @map("updated_at")
+
+  user             User?
+  schedules        Schedule[]
+
+  @@map("Employee")
+}
+
+model User {
+  userId        Int        @id @default(autoincrement()) @map("user_id")
+
+  username      String     @unique
+
+  passwordHash  String     @map("password_hash")
+
+  roleId        Int        @map("role_id")
+  employeeId    Int        @unique @map("employee_id")
+
+  lastLogin     DateTime?  @map("last_login")
+
+  createdAt     DateTime   @default(now()) @map("created_at")
+  updatedAt     DateTime   @updatedAt @map("updated_at")
+
+  role          Role       @relation(fields: [roleId], references: [roleId])
+  employee      Employee   @relation(fields: [employeeId], references: [employeeId])
+
+  @@map("User")
+}
+
+
+model Category {
+  categoryId     Int        @id @default(autoincrement()) @map("category_id")
+
+  categoryName   String     @unique @map("category_name")
+
+  description    String?
+
+  inventory      Inventory[]
+
+  @@map("Category")
+}
+
+model Inventory {
+  itemId          Int        @id @default(autoincrement()) @map("item_id")
+
+  categoryId      Int        @map("category_id")
+
+  itemName        String     @map("item_name")
+
+  quantity        Int
+
+  unit            String
+
+  minimumStock    Int        @map("minimum_stock")
+
+  createdAt       DateTime   @default(now()) @map("created_at")
+  updatedAt       DateTime   @updatedAt @map("updated_at")
+
+  category        Category   @relation(fields: [categoryId], references: [categoryId])
+
+  @@map("Inventory")
+}
+
+
+model Schedule {
+  scheduleId      Int            @id @default(autoincrement()) @map("schedule_id")
+
+  employeeId      Int            @map("employee_id")
+
+  workDate        DateTime       @map("work_date")
+
+  shiftStart      DateTime       @map("shift_start")
+
+  shiftEnd        DateTime       @map("shift_end")
+
+  shiftStatus     ShiftStatus    @default(SCHEDULED) @map("shift_status")
+
+  createdAt       DateTime       @default(now()) @map("created_at")
+
+  employee        Employee       @relation(fields: [employeeId], references: [employeeId])
+
+  @@map("Schedule")
 }
