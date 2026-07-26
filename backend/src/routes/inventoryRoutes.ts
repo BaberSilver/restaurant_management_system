@@ -6,7 +6,8 @@ import {
     getInventoryCountByCategoryId,
     createInventory,
     updateInventory,
-    deleteInventory
+    deleteInventory,
+    getLowStockItems,
 } from "../controllers/inventoryController.js";
 
 import { authenticate } from "../middleware/authenticate.js";
@@ -20,7 +21,19 @@ router.get(
     getInventory,
     getInventoryByCategoryId,
     getInventoryById,
-    getInventoryCountByCategoryId
+    getInventoryCountByCategoryId,
+);
+
+router.get(
+    "/low-stock",
+    authenticate,
+    authorize(
+        "ADMINISTRATOR",
+        "MANAGER",
+        "CHEF",
+        "COOK"
+    ),
+    getLowStockItems
 );
 
 router.post(

@@ -89,3 +89,16 @@ export async function deleteInventory(itemId: number) {
         where: { itemId },
     });
 }
+
+export async function getLowStockItems() {
+    const items = await prisma.inventory.findMany({
+        include: {
+            category: true,
+        },
+        orderBy: {
+            quantity: "asc",
+        },
+    });
+
+    return items.filter(item => item.quantity <= item.minimumStock);
+}

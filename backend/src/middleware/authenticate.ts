@@ -19,7 +19,7 @@ export function authenticate(
         const decoded = jwt.verify(
             token,
             process.env.JWT_SECRET!
-        );
+        ) as Express.UserPayload;
 
         req.user = decoded;
 

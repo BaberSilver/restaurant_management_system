@@ -6,7 +6,7 @@ export async function dashboard(
     res: Response
 ) {
     try {
-        const userId = (req as any).user.userId;
+        const userId = req.user.userId;
 
         const data = await getEmployeeDashboard(userId);
 

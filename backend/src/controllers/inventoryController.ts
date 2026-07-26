@@ -7,6 +7,8 @@ import {
     deleteInventory as deleteInventoryItem,
     getInventoryByCategoryId as getInventoryItemsByCategoryId,
     getInventoryCountByCategoryId as getInventoryItemsCountByCategoryId,
+    getLowStockItems as getLowStockInventoryItems,
+
 } from "../services/inventoryService.js";
 
 export async function getInventory(req: Request, res: Response) {
@@ -125,6 +127,18 @@ export async function deleteInventory(req: Request, res: Response) {
     } catch (error) {
         res.status(400).json({
             message: error instanceof Error ? error.message : "Failed to delete inventory item",
+        });
+    }
+}
+
+export async function getLowStockItems(req: Request, res: Response) {
+    try {
+        const lowStockItems = await getLowStockInventoryItems();
+        res.json(lowStockItems);
+    } catch (error) {
+        res.status(500).json({
+            message: "Failed to fetch low stock inventory items",
+            error: error instanceof Error ? error.message : "Unknown error",
         });
     }
 }

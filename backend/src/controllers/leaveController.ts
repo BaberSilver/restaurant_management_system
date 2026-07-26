@@ -19,7 +19,7 @@ export async function createLeave(req: Request, res: Response) {
 }
 
 export async function approveLeave(req: Request, res: Response) {
-    const leaveId = parseInt(req.params.id);
+    const leaveId = parseInt(req.params.leaveId, 10);
     const { status } = req.body;
 
     if (!["APPROVED", "REJECTED"].includes(status)) {

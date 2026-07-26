@@ -13,7 +13,6 @@ export async function login(username: string, password: string) {
         },
     });
 
-
     if (!user) {
         throw new Error("Invalid username or password");
     }
@@ -30,6 +29,7 @@ export async function login(username: string, password: string) {
     const token = jwt.sign(
         {
             userId: user.userId,
+            employeeId: user.employeeId,
             username: user.username,
             role: user.role.roleName,
         },
@@ -39,8 +39,30 @@ export async function login(username: string, password: string) {
         }
     );
 
+    // DTO (Data Transfer Object)
+    const userDTO = {
+        userId: user.userId,
+        username: user.username,
+
+        role: {
+            roleId: user.role.roleId,
+            roleName: user.role.roleName,
+            description: user.role.description,
+        },
+
+        employee: {
+            employeeId: user.employee.employeeId,
+            firstName: user.employee.firstName,
+            lastName: user.employee.lastName,
+            email: user.employee.email,
+            phoneNumber: user.employee.phoneNumber,
+            hireDate: user.employee.hireDate,
+            employmentStatus: user.employee.employmentStatus,
+        },
+    };
+
     return {
         token,
-        user,
+        user: userDTO,
     };
 }
