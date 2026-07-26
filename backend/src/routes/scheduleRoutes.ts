@@ -1,9 +1,15 @@
 import { Router } from "express";
 import {
     getSchedule,
+    getScheduleByID,
     createSchedule,
     updateSchedule,
-    deleteSchedule
+    deleteSchedule,
+    getMyCurrentShift,
+    getPreviousEmployeeShift,
+    getNextEmployeeShift,
+    getCoworkers,
+    getSchedulesInRange
 } from "../controllers/scheduleController.js";
 
 import { authenticate } from "../middleware/authenticate.js";
@@ -11,14 +17,19 @@ import { authorize } from "../middleware/authorize.js";
 
 const router = Router();
 
-// Anyone logged in
+
 router.get(
     "/",
     authenticate,
     getSchedule
 );
 
-// Admin + Manager
+router.get(
+    "/:id",
+    authenticate,
+    getScheduleByID
+);
+
 router.post(
     "/",
     authenticate,
@@ -26,7 +37,6 @@ router.post(
     createSchedule
 );
 
-// Admin + Manager
 router.put(
     "/:id",
     authenticate,
@@ -34,12 +44,41 @@ router.put(
     updateSchedule
 );
 
-// Administrator only
 router.delete(
     "/:id",
     authenticate,
     authorize("ADMINISTRATOR"),
     deleteSchedule
+);
+
+router.get(
+    "/me/current",
+    authenticate,
+    getMyCurrentShift
+);
+
+router.get(
+    "/me/previous",
+    authenticate,
+    getPreviousEmployeeShift
+);
+
+router.get(
+    "/me/next",
+    authenticate,
+    getNextEmployeeShift
+);
+
+router.get(
+    "/me/coworkers",
+    authenticate,
+    getCoworkers
+);
+
+router.get(
+    "/me/range",
+    authenticate,
+    getSchedulesInRange
 );
 
 export default router;

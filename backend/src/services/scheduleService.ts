@@ -69,3 +69,118 @@ export async function deleteSchedule(scheduleId: number) {
         },
     });
 }
+
+
+export async function getMyShift(employeeId: number) {
+    const today = new Date();
+
+    const startOfDay = new Date(today);
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(today);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    return prisma.schedule.findFirst({
+        where: {
+            employeeId,
+            workDate: {
+                gte: startOfDay,
+                lte: endOfDay,
+            },
+        },
+        include: {
+            employee: true,
+        },
+    });
+}
+
+export async function getPreviousShift(employeeId: number) {
+    return prisma.schedule.findFirst({
+        where: {
+            employeeId,
+            workDate: {
+                lt: new Date(),
+            },
+        },
+        orderBy: {
+            workDate: "desc",
+        },
+        include: {
+            employee: true,
+        },
+    });
+}
+
+
+export async function getNextShift(employeeId: number) {
+    return prisma.schedule.findFirst({
+        where: {
+            employeeId,
+            workDate: {
+                gt: new Date(),
+            },
+        },
+        orderBy: {
+            workDate: "asc",
+        },
+        include: {
+            employee: true,
+        },
+    });
+}
+
+
+export async function getCoworkersOnDuty(employeeId: number) {
+    const myShift = await getMyShift(employeeId);
+
+    if (!myShift) {
+        return [];
+    }
+
+    const startOfDay = new Date(myShift.workDate);
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(myShift.workDate);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    return prisma.schedule.findMany({
+        where: {
+            employeeId: {
+                not: employeeId,
+            },
+            workDate: {
+                gte: startOfDay,
+                lte: endOfDay,
+            },
+        },
+        include: {
+            employee: true,
+        },
+        orderBy: {
+            shiftStart: "asc",
+        },
+    });
+}
+
+
+export async function getSchedulesBetweenDates(
+    employeeId: number,
+    startDate: Date,
+    endDate: Date
+) {
+    return prisma.schedule.findMany({
+        where: {
+            employeeId,
+            workDate: {
+                gte: startDate,
+                lte: endDate,
+            },
+        },
+        include: {
+            employee: true,
+        },
+        orderBy: {
+            workDate: "asc",
+        },
+    });
+}

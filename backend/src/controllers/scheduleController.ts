@@ -5,6 +5,11 @@ import {
     createSchedule as createScheduleItem,
     updateSchedule as updateScheduleItem,
     deleteSchedule as deleteScheduleItem,
+    getMyShift,
+    getPreviousShift,
+    getNextShift,
+    getCoworkersOnDuty,
+    getSchedulesBetweenDates,
 } from "../services/scheduleService.js";
 
 export async function getSchedule(req: Request, res: Response) {
@@ -75,6 +80,117 @@ export async function deleteSchedule(req: Request, res: Response) {
     } catch (error) {
         res.status(400).json({
             message: error instanceof Error ? error.message : "Failed to delete schedule",
+        });
+    }
+}
+
+export async function getScheduleByID(req: Request, res: Response) {
+    try {
+        const id = Number(req.params.id);
+
+        const schedule = await getScheduleById(id);
+
+        if (!schedule) {
+            return res.status(404).json({
+                message: "Schedule not found",
+            });
+        }
+
+        res.json(schedule);
+    } catch (error) {
+        res.status(500).json({
+            message: error instanceof Error ? error.message : "Unknown error",
+        });
+    }
+}
+
+export async function getMyCurrentShift(req: Request, res: Response) {
+    try {
+        const employeeId = req.user.employeeId;
+
+        const shift = await getMyShift(employeeId);
+
+        res.json(shift);
+    } catch (error) {
+        res.status(500).json({
+            message: error instanceof Error ? error.message : "Unknown error",
+        });
+    }
+}
+
+export async function getPreviousEmployeeShift(
+    req: Request,
+    res: Response
+) {
+    try {
+        const employeeId = req.user.employeeId;
+
+        const shift = await getPreviousShift(employeeId);
+
+        res.json(shift);
+    } catch (error) {
+        res.status(500).json({
+            message: error instanceof Error ? error.message : "Unknown error",
+        });
+    }
+}
+
+export async function getNextEmployeeShift(
+    req: Request,
+    res: Response
+) {
+    try {
+        const employeeId = req.user.employeeId;
+
+        const shift = await getNextShift(employeeId);
+
+        res.json(shift);
+    } catch (error) {
+        res.status(500).json({
+            message: error instanceof Error ? error.message : "Unknown error",
+        });
+    }
+}
+
+export async function getCoworkers(req: Request, res: Response) {
+    try {
+        const employeeId = req.user.employeeId;
+
+        const coworkers = await getCoworkersOnDuty(employeeId);
+
+        res.json(coworkers);
+    } catch (error) {
+        res.status(500).json({
+            message: error instanceof Error ? error.message : "Unknown error",
+        });
+    }
+}
+
+export async function getSchedulesInRange(
+    req: Request,
+    res: Response
+) {
+    try {
+        const employeeId = req.user.employeeId;
+
+        const { start, end } = req.query;
+
+        if (!start || !end) {
+            return res.status(400).json({
+                message: "start and end dates are required",
+            });
+        }
+
+        const schedules = await getSchedulesBetweenDates(
+            employeeId,
+            new Date(start as string),
+            new Date(end as string)
+        );
+
+        res.json(schedules);
+    } catch (error) {
+        res.status(500).json({
+            message: error instanceof Error ? error.message : "Unknown error",
         });
     }
 }

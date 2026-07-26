@@ -26,6 +26,12 @@ enum ShiftStatus {
   CANCELLED
 }
 
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model Role {
   roleId      Int       @id @default(autoincrement()) @map("role_id")
   roleName    RoleName  @unique @map("role_name")
@@ -54,6 +60,7 @@ model Employee {
 
   user             User?
   schedules        Schedule[]
+  leaveRequests LeaveRequest[]
 
   @@map("Employee")
 }
@@ -132,4 +139,23 @@ model Schedule {
   employee        Employee       @relation(fields: [employeeId], references: [employeeId])
 
   @@map("Schedule")
+}
+
+model LeaveRequest {
+  leaveRequestId Int         @id @default(autoincrement()) @map("leave_request_id")
+
+  employeeId     Int         @map("employee_id")
+
+  startDate      DateTime    @map("start_date")
+  endDate        DateTime    @map("end_date")
+
+  reason         String
+
+  status         LeaveStatus @default(PENDING)
+
+  createdAt      DateTime    @default(now()) @map("created_at")
+
+  employee        Employee    @relation(fields: [employeeId], references: [employeeId])
+
+  @@map("LeaveRequest")
 }
