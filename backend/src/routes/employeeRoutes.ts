@@ -1,6 +1,8 @@
 import { Router } from "express";
 import {
     getEmployees,
+    getEmployeeById,
+    getEmployeeByNameOrHireDate,
     createEmployee,
     updateEmployee,
     deleteEmployee
@@ -11,14 +13,14 @@ import { authorize } from "../middleware/authorize.js";
 
 const router = Router();
 
-// Anyone logged in
 router.get(
     "/",
     authenticate,
-    getEmployees
+    getEmployees,
+    getEmployeeById,
+    getEmployeeByNameOrHireDate
 );
 
-// Admin + Manager
 router.post(
     "/",
     authenticate,
@@ -26,7 +28,6 @@ router.post(
     createEmployee
 );
 
-// Admin + Manager
 router.put(
     "/:id",
     authenticate,
@@ -34,12 +35,12 @@ router.put(
     updateEmployee
 );
 
-// Administrator only
 router.delete(
     "/:id",
     authenticate,
     authorize("ADMINISTRATOR"),
     deleteEmployee
 );
+
 
 export default router;

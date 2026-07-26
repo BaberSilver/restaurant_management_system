@@ -28,6 +28,33 @@ export async function getEmployeeById(employeeId: number) {
     });
 }
 
+export async function getEmployeeByNameOrHireDate(name?: string, hireDate?: Date) {
+    const whereClause: any = {};
+
+    if (name) {
+        whereClause.OR = [
+            { firstName: { contains: name, mode: "insensitive" } },
+            { lastName: { contains: name, mode: "insensitive" } },
+        ];
+    }
+
+    if (hireDate) {
+        whereClause.hireDate = hireDate;
+    }
+
+    return await prisma.employee.findMany({
+        where: whereClause,
+        include: {
+            user: {
+                select: {
+                    username: true,
+                    role: true,
+                },
+            },
+        },
+    });
+}
+
 export async function createEmployee(data: {
     firstName: string;
     lastName: string;

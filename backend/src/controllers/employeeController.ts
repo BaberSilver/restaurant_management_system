@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
 import {
     getAllEmployees as getAllEmployeesService,
-    getEmployeeById,
+    getEmployeeById as getEmployeeByIdService ,
     createEmployee as createEmployeeService,
     updateEmployee as updateEmployeeService,
     deleteEmployee as deleteEmployeeService,
+    getEmployeeByNameOrHireDate as getEmployeeByNameOrHireDateService
 } from "../services/employeeService.js";
 
 export async function getEmployees(req: Request, res: Response) {
@@ -14,6 +15,43 @@ export async function getEmployees(req: Request, res: Response) {
     } catch (error) {
         res.status(500).json({
             message: "Failed to fetch employees",
+            error: error instanceof Error ? error.message : "Unknown error",
+        });
+    }
+}
+
+export async function getEmployeeByNameOrHireDate(req: Request, res: Response) {
+    try {
+        const { name, hireDate } = req.query;
+
+        const employees = await getEmployeeByNameOrHireDateService(
+            typeof name === "string" ? name : undefined,
+            typeof hireDate === "string" ? new Date(hireDate) : undefined
+        );
+
+        res.json(employees);
+    } catch (error) {
+        res.status(500).json({
+            message: "Failed to fetch employees",
+            error: error instanceof Error ? error.message : "Unknown error",
+        });
+    }
+}
+
+export async function getEmployeeById(req: Request, res: Response) {
+    try {
+        const { id } = req.params as { id: string };
+
+        const employee = await getEmployeeByIdService(parseInt(id));
+
+        if (!employee) {
+            return res.status(404).json({ message: "Employee not found" });
+        }
+
+        res.json(employee);
+    } catch (error) {
+        res.status(500).json({
+            message: "Failed to fetch employee",
             error: error instanceof Error ? error.message : "Unknown error",
         });
     }

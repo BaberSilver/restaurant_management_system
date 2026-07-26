@@ -4,6 +4,7 @@ import authRoutes from "./routes/authRoutes.js";
 import employeeRoutes from "./routes/employeeRoutes.js";
 import inventoryRoutes from "./routes/inventoryRoutes.js";
 import scheduleRoutes from "./routes/scheduleRoutes.js";
+import dashboardRoutes from "./routes/dashboardRoutes.js";
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/employees", employeeRoutes);
 app.use("/api/inventory", inventoryRoutes);
 app.use("/api/schedules", scheduleRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 app.use((req, res) => {
     res.status(404).json({ message: "Route not found" });

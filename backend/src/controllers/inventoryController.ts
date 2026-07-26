@@ -1,10 +1,12 @@
 import { Request, Response } from "express";
 import {
     getAllInventory as getAllInventoryItems,
-    getInventoryById,
+    getInventoryById as getInventoryItemById,
     createInventory as createInventoryItem,
     updateInventory as updateInventoryItem,
     deleteInventory as deleteInventoryItem,
+    getInventoryByCategoryId as getInventoryItemsByCategoryId,
+    getInventoryCountByCategoryId as getInventoryItemsCountByCategoryId,
 } from "../services/inventoryService.js";
 
 export async function getInventory(req: Request, res: Response) {
@@ -14,6 +16,54 @@ export async function getInventory(req: Request, res: Response) {
     } catch (error) {
         res.status(500).json({
             message: "Failed to fetch inventory",
+            error: error instanceof Error ? error.message : "Unknown error",
+        });
+    }
+}
+
+export async function getInventoryById(req: Request, res: Response) {
+    try {
+        const { id } = req.params as { id: string };
+        const item = await getInventoryItemById(parseInt(id));
+
+        if (!item) {
+            return res.status(404).json({
+                message: "Inventory item not found",
+            });
+        }
+
+        res.json(item);
+    } catch (error) {
+        res.status(500).json({
+            message: "Failed to fetch inventory item",
+            error: error instanceof Error ? error.message : "Unknown error",
+        });
+    }
+}
+
+export async function getInventoryByCategoryId(req: Request, res: Response) {
+    try {
+        const { categoryId } = req.params as { categoryId: string };
+        const items = await getInventoryItemsByCategoryId(parseInt(categoryId));
+
+        res.json(items);
+    } catch (error) {
+        res.status(500).json({
+            message: "Failed to fetch inventory items by category",
+            error: error instanceof Error ? error.message : "Unknown error",
+        });
+    }
+}
+
+export async function getInventoryCountByCategoryId(req: Request, res: Response) {
+    try {
+        const { categoryId } = req.params as { categoryId: string };
+        const count = await getInventoryItemsCountByCategoryId(parseInt(categoryId));
+
+        res.json({ count });
+    } catch (error) {
+        res.status(500).json({
+            message: "Failed to fetch inventory count by category",
             error: error instanceof Error ? error.message : "Unknown error",
         });
     }

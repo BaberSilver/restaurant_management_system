@@ -1,6 +1,9 @@
 import { Router } from "express";
 import {
     getInventory,
+    getInventoryByCategoryId,
+    getInventoryById,
+    getInventoryCountByCategoryId,
     createInventory,
     updateInventory,
     deleteInventory
@@ -11,14 +14,15 @@ import { authorize } from "../middleware/authorize.js";
 
 const router = Router();
 
-// Anyone logged in
 router.get(
     "/",
     authenticate,
-    getInventory
+    getInventory,
+    getInventoryByCategoryId,
+    getInventoryById,
+    getInventoryCountByCategoryId
 );
 
-// Admin + Manager
 router.post(
     "/",
     authenticate,
@@ -26,7 +30,6 @@ router.post(
     createInventory
 );
 
-// Admin + Manager
 router.put(
     "/:id",
     authenticate,
@@ -34,7 +37,6 @@ router.put(
     updateInventory
 );
 
-// Administrator only
 router.delete(
     "/:id",
     authenticate,

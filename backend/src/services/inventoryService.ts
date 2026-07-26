@@ -17,6 +17,21 @@ export async function getInventoryById(itemId: number) {
     });
 }
 
+export async function getInventoryByCategoryId(categoryId: number) {
+    return await prisma.inventory.findMany({
+        where: { categoryId },
+        include: {
+            category: true,
+        },
+    });
+}
+
+export async function getInventoryCountByCategoryId(categoryId: number) {
+    return await prisma.inventory.count({
+        where: { categoryId },
+    });
+}
+
 export async function createInventory(data: {
     itemName: string;
     categoryId: number;
