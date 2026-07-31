@@ -40,9 +40,7 @@ export async function getEmployeeDashboard(userId: number) {
         alerts.push("You have a shift scheduled today.");
     }
 
-    const pendingLeave = leaveRequests.find(
-        leave => leave.status === "PENDING"
-    );
+    const pendingLeave = leaveRequests.find((leave) => leave.status === "PENDING");
 
     if (pendingLeave) {
         alerts.push("You have a pending leave request.");

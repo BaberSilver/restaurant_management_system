@@ -11,6 +11,54 @@ export async function getMyLeaveRequests(employeeId: number) {
     });
 }
 
+export async function createLeaveRequest(
+    employeeId: number,
+    startDate: string,
+    endDate: string,
+    reason: string
+) {
+    return prisma.leaveRequest.create({
+        data: {
+            employeeId,
+            startDate: new Date(startDate),
+            endDate: new Date(endDate),
+            reason,
+            status: "PENDING",
+        },
+        include: {
+            employee: true,
+        },
+    });
+}
+
+export async function approveLeaveRequest(
+    leaveRequestId: number,
+    status: "APPROVED" | "REJECTED"
+) {
+    return prisma.leaveRequest.update({
+        where: {
+            leaveRequestId,
+        },
+        data: {
+            status,
+        },
+        include: {
+            employee: true,
+        },
+    });
+}
+
+export async function getAllLeaveRequests() {
+    return prisma.leaveRequest.findMany({
+        include: {
+            employee: true,
+        },
+        orderBy: {
+            createdAt: "desc",
+        },
+    });
+}
+
 export async function getEmployeesOnLeave() {
 
     const today = new Date();

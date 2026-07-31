@@ -2,7 +2,8 @@ import { Router } from "express";
 import {
     getMyLeaves,
     createLeave,
-    approveLeave
+    approveLeave,
+    getLeaveRequests,
 } from "../controllers/leaveController.js";
 
 import { authenticate } from "../middleware/authenticate.js";
@@ -14,6 +15,13 @@ router.get(
     "/me",
     authenticate,
     getMyLeaves
+);
+
+router.get(
+    "/",
+    authenticate,
+    authorize("ADMINISTRATOR", "MANAGER"),
+    getLeaveRequests
 );
 
 router.post(
@@ -28,3 +36,5 @@ router.put(
     authorize("ADMINISTRATOR", "MANAGER"),
     approveLeave
 );
+
+export default router;

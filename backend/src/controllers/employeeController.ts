@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import {
     getAllEmployees as getAllEmployeesService,
     getEmployeeById as getEmployeeByIdService ,
+    getMyEmployeeProfile as getMyEmployeeProfileService,
     createEmployee as createEmployeeService,
     updateEmployee as updateEmployeeService,
     deleteEmployee as deleteEmployeeService,
@@ -33,6 +34,23 @@ export async function getEmployeeByNameOrHireDate(req: Request, res: Response) {
     } catch (error) {
         res.status(500).json({
             message: "Failed to fetch employees",
+            error: error instanceof Error ? error.message : "Unknown error",
+        });
+    }
+}
+
+export async function getMyEmployee(req: Request, res: Response) {
+    try {
+        const employee = await getMyEmployeeProfileService(req.user.employeeId);
+
+        if (!employee) {
+            return res.status(404).json({ message: "Employee not found" });
+        }
+
+        res.json(employee);
+    } catch (error) {
+        res.status(500).json({
+            message: "Failed to fetch employee profile",
             error: error instanceof Error ? error.message : "Unknown error",
         });
     }

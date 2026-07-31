@@ -2,16 +2,21 @@ import prisma from "../config/prisma.js";
 import bcrypt from "bcrypt";
 
 export async function getAllEmployees() {
-    return await prisma.employee.findMany({
-        include: {
-            user: {
-                select: {
-                    username: true,
-                    role: true,
+    try {
+        return await prisma.employee.findMany({
+            include: {
+                user: {
+                    select: {
+                        username: true,
+                        role: true,
+                    },
                 },
             },
-        },
-    });
+        });
+    } catch (err) {
+        console.error(err);
+        throw err;
+    }
 }
 
 export async function getEmployeeById(employeeId: number) {
@@ -26,6 +31,10 @@ export async function getEmployeeById(employeeId: number) {
             },
         },
     });
+}
+
+export async function getMyEmployeeProfile(employeeId: number) {
+    return getEmployeeById(employeeId);
 }
 
 export async function getEmployeeByNameOrHireDate(name?: string, hireDate?: Date) {

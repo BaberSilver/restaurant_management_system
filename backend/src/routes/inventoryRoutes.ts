@@ -18,22 +18,33 @@ const router = Router();
 router.get(
     "/",
     authenticate,
-    getInventory,
-    getInventoryByCategoryId,
-    getInventoryById,
-    getInventoryCountByCategoryId,
+    getInventory
 );
 
 router.get(
     "/low-stock",
     authenticate,
-    authorize(
-        "ADMINISTRATOR",
-        "MANAGER",
-        "CHEF",
-        "COOK"
-    ),
+    authorize("ADMINISTRATOR", "MANAGER", "CHEF"),
     getLowStockItems
+);
+
+router.get(
+    "/category/:categoryId",
+    authenticate,
+    getInventoryByCategoryId
+);
+
+router.get(
+    "/count/:categoryId",
+    authenticate,
+    authorize("ADMINISTRATOR", "MANAGER"),
+    getInventoryCountByCategoryId
+);
+
+router.get(
+    "/:id",
+    authenticate,
+    getInventoryById
 );
 
 router.post(

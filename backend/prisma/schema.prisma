@@ -10,8 +10,7 @@ enum RoleName {
   ADMINISTRATOR
   MANAGER
   CHEF
-  COOK
-  CASHIER
+  WAITER
 }
 
 enum EmploymentStatus {

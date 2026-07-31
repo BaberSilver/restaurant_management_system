@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
     getEmployees,
+    getMyEmployee,
     getEmployeeById,
     getEmployeeByNameOrHireDate,
     createEmployee,
@@ -14,11 +15,30 @@ import { authorize } from "../middleware/authorize.js";
 const router = Router();
 
 router.get(
+    "/me",
+    authenticate,
+    getMyEmployee
+);
+
+router.get(
     "/",
     authenticate,
-    getEmployees,
-    getEmployeeById,
+    authorize("ADMINISTRATOR", "MANAGER"),
+    getEmployees
+);
+
+router.get(
+    "/search",
+    authenticate,
+    authorize("ADMINISTRATOR", "MANAGER"),
     getEmployeeByNameOrHireDate
+);
+
+router.get(
+    "/:id",
+    authenticate,
+    authorize("ADMINISTRATOR", "MANAGER"),
+    getEmployeeById
 );
 
 router.post(

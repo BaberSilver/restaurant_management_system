@@ -1,20 +1,17 @@
+import { Outlet } from "react-router-dom";
+import Navbar from "./Navbar";
+import Sidebar from "./Sidebar";
+
 export default function Layout() {
   return (
-    <nav className="bottom-nav">
-      <ul className="nav-items">
-        <li className="nav-item">
-          <a href="#">Home</a>
-        </li>
-        <li className="nav-item">
-          <a href="#">Orders</a>
-        </li>
-        <li className="nav-item">
-          <a href="#">Menu</a>
-        </li>
-        <li className="nav-item">
-          <a href="#">Profile</a>
-        </li>
-      </ul>
-    </nav>
-  )
+    <div className="app-shell">
+      <Sidebar />
+      <div className="main-shell">
+        <Navbar />
+        <main className="page-frame">
+          <Outlet />
+        </main>
+      </div>
+    </div>
+  );
 }

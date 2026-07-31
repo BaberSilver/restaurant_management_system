@@ -21,13 +21,14 @@ const router = Router();
 router.get(
     "/",
     authenticate,
+    authorize("ADMINISTRATOR", "MANAGER"),
     getSchedule
 );
 
 router.get(
-    "/:id",
+    "/me",
     authenticate,
-    getScheduleByID
+    getMyCurrentShift
 );
 
 router.post(
@@ -79,6 +80,13 @@ router.get(
     "/me/range",
     authenticate,
     getSchedulesInRange
+);
+
+router.get(
+    "/:id",
+    authenticate,
+    authorize("ADMINISTRATOR", "MANAGER"),
+    getScheduleByID
 );
 
 export default router;
